@@ -9,10 +9,13 @@ kubectl_filter="\
 {.items[*]}{.spec.nodeName}{','}\
 {.items[*]}{.metadata.annotations.cnpg\.io\/operatorVersion}{'\n'}{end}"
 
-echo "Instance Name,Cluster Name,Status,Image Version,Role,Node name,Operator Version" > ./monitor.log
+cluster_monitor=$(mktemp)
+cluster_monitor1=$(mktemp)
 
-kubectl get cluster -o wide  > ./monitor_cluster.log
-cat monitor_cluster.log | sort | column -s, -t > monitor_cluster1.log
+echo "Instance Name,Cluster Name,Status,Image Version,Role,Node name,Operator Version" > ${cluster_monitor}
+
+kubectl get cluster -o wide  > ${cluster_monitor}
+cat ${cluster_monitor} | sort | column -s, -t > ${cluster_monitor1}
 
 # ANSI color escape codes
 RED='\033[0;31m'
@@ -39,5 +42,5 @@ while IFS= read -r line; do
     else
         printf "%b\n" "${RED}${line}${RESET}"
     fi
-done < "monitor_cluster1.log"
+done < ${cluster_monitor1}
 

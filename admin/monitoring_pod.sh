@@ -9,10 +9,13 @@ kubectl_filter="\
 {.items[*]}{.spec.nodeName}{','}\
 {.items[*]}{.metadata.annotations.cnpg\.io\/operatorVersion}{'\n'}{end}"
 
-echo "Instance Name,Cluster Name,Status,Image Version,Role,Node name,Operator Version" > ./monitor.log
+pod_monitor=$(mktemp)
+pod_monitor1=$(mktemp)
 
-kubectl get pod -o=jsonpath="$kubectl_filter"  >> ./monitor.log
-cat monitor.log | sort | column -s, -t > monitor1.log
+echo "Instance Name,Cluster Name,Status,Image Version,Role,Node name,Operator Version" > ${pod_monitor}
+
+kubectl get pod -o=jsonpath="$kubectl_filter"  >> ${pod_monitor}
+cat ${pod_monitor} | sort | column -s, -t > ${pod_monitor1}
 
 # ANSI color escape codes
 RED='\033[0;31m'
@@ -22,15 +25,6 @@ CYAN='\033[0;36m'
 WHITE='\033[0;37m'
 BOLD='\033[1;33m'
 RESET='\033[0m' # Reset color to default
-
-# Path to the file
-file_path="monitor1.log"
-
-# Check if the file exists
-if [ ! -f "$file_path" ]; then
-    echo "File not found: $file_path"
-    #exit 1
-fi
 
 # Loop through each line in the file
 while IFS= read -r line; do
@@ -46,6 +40,7 @@ while IFS= read -r line; do
     else
         printf "%b\n" "${RED}${line}${RESET}"
     fi
-done < "monitor1.log"
-
+done < ${pod_monitor1}
+rm ${pod_monitor}
+rm ${pod_monitor1}
 
