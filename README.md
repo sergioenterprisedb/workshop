@@ -13,6 +13,7 @@ The installation contains these software:
 sergio-demo.pem
 
 # How to connect
+Replace XXXX-XXXX-XXXX-XXXX by the machine IP.
 ```
 ssh -i "sergio-demo.pem" ec2-user@ec2-XXX-XXX-XXX-XXX.eu-west-3.compute.amazonaws.com
 ```

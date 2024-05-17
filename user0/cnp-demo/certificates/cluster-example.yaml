@@ -1,0 +1,32 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: cluster-example
+spec:
+  instances: 1
+  imageName: ghcr.io/cloudnative-pg/postgresql:14.2
+  enableSuperuserAccess: true
+
+  certificates:
+    serverCASecret: my-postgresql-server-ca
+    serverTLSSecret: my-postgresql-server
+    clientCASecret: my-postgresql-client-ca
+    replicationTLSSecret: my-postgresql-client
+
+  postgresql:
+    pg_hba:
+  #    - hostssl all all 0.0.0.0/0 cert
+      - hostssl app all all cert
+
+  storage:
+    size: 1Gi
+  walStorage:
+    size: 1Gi
+
+  resources:
+    requests:
+      memory: "1Gi"
+      cpu: "2"
+    limits:
+      memory: "1Gi"
+      cpu: "2"

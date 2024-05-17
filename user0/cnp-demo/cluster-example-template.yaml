@@ -1,0 +1,43 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: cluster-example
+spec:
+  instances: 3
+  imageName: ghcr.io/cloudnative-pg/postgresql:14.2
+  #imagePullPolicy: Never
+  enableSuperuserAccess: true
+
+  # Reduce the frequency of standby HA slots updates to once every 5 minutes
+  replicationSlots:
+    highAvailability:
+      enabled: true
+    #updateInterval: 300
+
+  minSyncReplicas: 1
+  maxSyncReplicas: 1
+
+  postgresql:
+    parameters:
+      pg_stat_statements.max: "10000"
+      pg_stat_statements.track: all
+    pg_hba:
+      - host replication all all trust
+      - hostssl replication all all trust
+      - hostssl replication streaming_replica all cert
+      - host all all 0.0.0.0/0 md5
+
+  storage:
+    size: 500Mi
+
+  monitoring:
+    enablePodMonitor: true
+
+  resources:
+    requests:
+      memory: "500Mi"
+      cpu: "0.5"
+    limits:
+      memory: "500Mi"
+      cpu: "0.5"
+
