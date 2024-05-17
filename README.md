@@ -10,7 +10,7 @@ The installation contains these software:
 - git
 
 # Download the key
-sergio-demo.pem
+[Pem file sergio-demo.pem](./keys/sergio-demo.pem).
 
 # How to connect
 Replace XXXX-XXXX-XXXX-XXXX by the machine IP.
